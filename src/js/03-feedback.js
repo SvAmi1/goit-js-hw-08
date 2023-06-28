@@ -14,22 +14,24 @@ form.addEventListener('input', throttle(handleTextareaInput, 500));
 
 populateTextarea();
 
-function handleFormSubmit(ev) {
-    ev.preventDefault();
+function handleFormSubmit(evt) {
+    evt.preventDefault();
    
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(feedback));
-
-    ev.target.reset();
+    alertSubmit();
+    
+    evt.target.reset();
 
     localStorage.removeItem(STORAGE_KEY);
     email.value = '';
     message.value = '';
 
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(feedback));
     console.log('Feedback:', feedback);
+    
   }
   
-  function handleTextareaInput(ev) {
-    feedback[ev.target.name] = ev.target.value;
+  function handleTextareaInput(evt) {
+    feedback[evt.target.name] = evt.target.value;
   
     localStorage.setItem(STORAGE_KEY, JSON.stringify(feedback));
   }
@@ -37,8 +39,16 @@ function handleFormSubmit(ev) {
   function populateTextarea() {
     const savedMessage = JSON.parse(localStorage.getItem(STORAGE_KEY));
     
-    if (savedMessage) { 
+    if (savedMessage === null) {
+      return;
+    }
+
     email.value = savedMessage.email || '';
     message.value = savedMessage.message || '';
+}
+
+const alertSubmit = () => {
+  if (email.value === '' || message.value === '') {
+    return alert(`Fill in all fields of the form, please`);
   }
 }
